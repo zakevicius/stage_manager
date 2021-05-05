@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class StagesController < ApplicationController
+  include Authenticate
+
+  before_action :authenticate
   before_action :set_stage, only: %i[show update]
-  ACTIONS = %w[claim unclaim].freeze
 
   def index
     render json: Stage.all
@@ -13,25 +15,25 @@ class StagesController < ApplicationController
   end
 
   def update
-    stage_params = {}
+    new_stage_params = {}
 
     case params[:action]
-    when ACTIONS[0]
-      stage_params = {
+    when 'claim'
+      new_stage_params = {
         claimed_since: Time.now,
-        last_deployment_made_by: params[:claimed_by]
+        last_deployment_made_by: params[:claimed_by],
+        status: 1
       }
-      @stage.claimed!
-    when ACTIONS[1]
-      stage_params = {
-        claimed_since: nil
+    when 'unclaim'
+      new_stage_params = {
+        claimed_since: nil,
+        status: 0
       }
-      @stage.unclaimed!
     else
       render json: { error: "Unknown action #{params[:action]}" }
     end
 
-    if @stage.update(stage_params)
+    if @stage.update(new_stage_params)
       render json: @stage
     else
       render json: { errors: @stage.errors.full_messages }
