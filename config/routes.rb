@@ -2,6 +2,6 @@
 
 Rails.application.routes.draw do
   resources :stages, only: %i[index show update] do
-    resources :histories, only: :index
+    resources :logs, only: :index
   end
 end
