@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_02_155148) do
+ActiveRecord::Schema.define(version: 2021_05_08_120834) do
 
-  create_table "histories", charset: "utf8mb4", force: :cascade do |t|
+  create_table "logs", charset: "utf8mb4", force: :cascade do |t|
     t.string "action_made_by"
     t.string "action"
     t.bigint "stage_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["stage_id"], name: "index_histories_on_stage_id"
+    t.index ["stage_id"], name: "index_logs_on_stage_id"
   end
 
   create_table "stages", charset: "utf8mb4", force: :cascade do |t|
@@ -31,5 +31,5 @@ ActiveRecord::Schema.define(version: 2021_05_02_155148) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "histories", "stages"
+  add_foreign_key "logs", "stages"
 end
