@@ -51,5 +51,5 @@ test:
 production:
   <<: *default
   database: stage_manager_production
-  username: stage_manager
+  username: <%= ENV['STAGE_MANAGER_DATABASE_USERNAME'] %>
   password: <%= ENV['STAGE_MANAGER_DATABASE_PASSWORD'] %>
