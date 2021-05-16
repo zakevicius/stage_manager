@@ -6,14 +6,14 @@ class StagesController < ApplicationController
   include Errorable
 
   before_action :authenticate
+  before_action :set_stages, only: :index
   before_action :set_stage, only: %i[show update]
+  after_action :create_log, only: %i[claim_stage unclaim_stage]
 
   def index
-    render json: Stage.all
   end
 
   def show
-    render json: @stage
   end
 
   def update
@@ -33,16 +33,12 @@ class StagesController < ApplicationController
     @loggable = @stage = Stage.find(params[:id])
   end
 
-  def stage_params
-    params.require(:stage).permit(:id, :action, :claimed_by)
+  def set_stages
+    @stages = Stage.all
   end
 
-  def log_params
-    claimed_by, action = stage_params.values_at(:claimed_by, :action)
-    {
-      action_made_by: claimed_by || nil,
-      action: action
-    }
+  def stage_params
+    params.require(:stage).permit(:id, :action, :claimed_by)
   end
 
   def claim_stage
@@ -55,7 +51,6 @@ class StagesController < ApplicationController
     }
 
     render json: @stage.update(new_stage_params) ? @stage : { errors: @stage.errors.full_messages }
-    create_log
   end
 
   def unclaim_stage
@@ -68,6 +63,5 @@ class StagesController < ApplicationController
     }
 
     render json: @stage.update(new_stage_params) ? @stage : { errors: @stage.errors.full_messages }
-    create_log
   end
 end
