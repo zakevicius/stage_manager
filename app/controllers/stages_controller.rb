@@ -10,11 +10,9 @@ class StagesController < ApplicationController
   before_action :set_stage, only: %i[show update]
   after_action :create_log, only: %i[claim_stage unclaim_stage]
 
-  def index
-  end
+  def index; end
 
-  def show
-  end
+  def show; end
 
   def update
     case stage_params[:action]
