@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_08_120834) do
+ActiveRecord::Schema.define(version: 2021_05_22_120327) do
 
   create_table "logs", charset: "utf8mb4", force: :cascade do |t|
     t.string "action_made_by"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2021_05_08_120834) do
   end
 
   create_table "stages", charset: "utf8mb4", force: :cascade do |t|
-    t.integer "stage"
+    t.integer "stage_id"
     t.integer "status", default: 0
     t.timestamp "claimed_since"
     t.string "last_deployment_made_by"
