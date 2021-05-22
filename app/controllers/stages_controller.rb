@@ -8,7 +8,8 @@ class StagesController < ApplicationController
   before_action :authenticate
   before_action :set_stages, only: :index
   before_action :set_stage, only: %i[show update]
-  after_action :create_log, only: %i[claim_stage unclaim_stage]
+
+  after_action :create_log, only: %i[update]
 
   def index; end
 
@@ -39,27 +40,19 @@ class StagesController < ApplicationController
     params.require(:stage).permit(:id, :action, :claimed_by)
   end
 
+  def log_params
+    { action: stage_params[:action], made_by: stage_params[:claimed_by] }
+  end
+
   def claim_stage
-    return render_error "Stage ##{@stage.stage} is currently claimed!" if @stage.claimed?
+    return render_error "Stage ##{@stage.stage_id} is currently claimed!" if @stage.claimed?
 
-    new_stage_params = {
-      claimed_since: Time.now,
-      last_deployment_made_by: stage_params[:claimed_by],
-      status: 1
-    }
-
-    render json: @stage.update(new_stage_params) ? @stage : { errors: @stage.errors.full_messages }
+    render json: @stage.claim!(stage_params) ? @stage : { errors: @stage.errors.full_messages }
   end
 
   def unclaim_stage
-    return render json: { error: "Stage ##{@stage.stage} is already unclaimed!" } if @stage.unclaimed?
+    return render json: { error: "Stage ##{@stage.stage_id} is already unclaimed!" } if @stage.unclaimed?
 
-    new_stage_params = {
-      claimed_since: nil,
-      last_deployment_made_by: nil,
-      status: 0
-    }
-
-    render json: @stage.update(new_stage_params) ? @stage : { errors: @stage.errors.full_messages }
+    render json: @stage.unclaim! ? @stage : { errors: @stage.errors.full_messages }
   end
 end

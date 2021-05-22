@@ -4,7 +4,7 @@ module Loggable
   extend ActiveSupport::Concern
 
   def create_log
-    log = @loggable.logs.build(action: stage_params[:action], action_made_by: stage_params[:claimed_by])
+    log = @loggable.logs.build(action: log_params[:action], action_made_by: log_params[:made_by])
     log.save
   end
 end
