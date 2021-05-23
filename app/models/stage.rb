@@ -4,7 +4,7 @@ class Stage < ApplicationRecord
   serialize :actions, Array
   enum status: { unclaimed: 0, claimed: 1 }
 
-  has_many :logs
+  has_many :logs, dependent: :destroy
 
   def claim!(params)
     update(claimed_since: Time.now, last_deployment_made_by: params[:claimed_by], status: 1)
