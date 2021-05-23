@@ -9,7 +9,7 @@ class StagesController < ApplicationController
   before_action :set_stages, only: :index
   before_action :set_stage, only: %i[show update]
 
-  after_action :create_log, only: %i[update]
+  after_action :create_log, only: %i[update], if: -> { response.successful? }
 
   def index; end
 
@@ -47,12 +47,12 @@ class StagesController < ApplicationController
   def claim_stage
     return render_error "Stage ##{@stage.stage_id} is currently claimed!" if @stage.claimed?
 
-    render json: @stage.claim!(stage_params) ? @stage : { errors: @stage.errors.full_messages }
+    @stage.claim!(stage_params) ? render(json: @stage) : render_error('Encountered errors while claiming stage.')
   end
 
   def unclaim_stage
-    return render json: { error: "Stage ##{@stage.stage_id} is already unclaimed!" } if @stage.unclaimed?
+    return render_error "Stage ##{@stage.stage_id} is already unclaimed!" if @stage.unclaimed?
 
-    render json: @stage.unclaim! ? @stage : { errors: @stage.errors.full_messages }
+    @stage.unclaim! ? render(json: @stage) : render_error('Encountered errors while unclaiming stage.')
   end
 end
