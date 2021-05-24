@@ -8,9 +8,10 @@ module Authenticate
   private
 
   def authenticate
-    authenticate_with_http_token do |token, _options|
-      render_unauthorized unless secure_compare(token, Rails.application.credentials.api_secure_token)
+    @session = authenticate_with_http_token do |token, _options|
+      secure_compare(token, Rails.application.credentials.api_secure_token)
     end
+    render_unauthorized unless @session.present?
   end
 
   def render_unauthorized
